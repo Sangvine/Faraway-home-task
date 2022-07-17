@@ -1,6 +1,7 @@
 import { cast, flow, getEnv, Instance, SnapshotOrInstance, getSnapshot, types } from 'mobx-state-tree';
 import { nanoid } from 'nanoid';
 import { http } from '../http/http';
+import Loader from './Loader';
 
 export const Character = types
     .model('Character', {
@@ -24,16 +25,18 @@ type CharacterRequest = {
     count: number;
 } & CharacterModel;
 
-export const CharacterStore = types
-    .model('CharacterStore', {
+export const CharacterStore = Loader.named('IpPoolStore')
+    .props({
         characters: types.array(Character),
         count: types.maybeNull(types.number),
     })
     .actions(self => {
         const fetchCharacters = flow(function*(params?: any) {
+            self.setLoading(true);
             const response = yield http<CharacterRequest>('https://swapi.dev/api/people/', params);
             setCharacters(response.results);
             self.count = cast(response.count);
+            self.setLoading(false);
         });
 
         const setCharacters = (characters: CharacterModel[]) => {
