@@ -13,42 +13,36 @@ const { Search } = Input;
 
 const CharacterList: React.FC = observer(() => {
     const [page, setPage] = useState(1);
+    const [search, setSearch] = useState<string>();
+
     const {
         charactersStore: { fetchCharacters, characters, count, loading },
     } = useMst();
 
     useEffect(() => {
-        void fetchCharacters();
+        void fetchCharacters({ page });
     }, []);
 
     const paginationHandler = (page: number) => {
-        void fetchCharacters({ page });
         setPage(page);
-    };
-
-    const colStyles = {
-        flexBasis: '20%',
-        width: '20%',
-        minWidth: 200,
+        void fetchCharacters({ page, search });
     };
 
     const searchHandler = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
-        void fetchCharacters({ search: e.target.value });
+        const search = e.target.value;
+        setSearch(search);
+        setPage(1);
+        void fetchCharacters({ page: 1, search });
     }, 500);
 
     return (
         <section className="main-content">
-            <Search
-                placeholder="searching by name"
-                enterButton
-                style={{ margin: '0px 20px 0px 20px', width: 'unset' }}
-                onChange={searchHandler}
-            />
+            <Search placeholder="searching by name" enterButton className="search-input" onChange={searchHandler} />
             <Spin spinning={loading}>
                 <Row className="characters" gutter={24}>
                     {getSnapshot(characters).map(({ id, name, birth_year, height }) => {
                         return (
-                            <Col key={id} style={colStyles}>
+                            <Col key={id} className="characters-column">
                                 <Card
                                     title={name}
                                     className="character"
@@ -70,7 +64,7 @@ const CharacterList: React.FC = observer(() => {
                 current={page}
                 onChange={paginationHandler}
                 showSizeChanger={false}
-                style={{ marginLeft: 20 }}
+                className="characters-pagination"
             />
         </section>
     );

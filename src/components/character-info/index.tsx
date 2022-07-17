@@ -10,12 +10,13 @@ import { CharacterModel } from '../../models/CharactersStore';
 import './index.css';
 
 const CharacterInfo: React.FC = observer(() => {
-    let { characterId } = useParams();
+    const [characterInfo, setCharacterInfo] = useState<CharacterModel>();
+
+    const { characterId } = useParams();
+
     const {
         charactersStore: { fetchCharacter, characters },
     } = useMst();
-
-    const [characterInfo, setCharacterInfo] = useState<CharacterModel>();
 
     useEffect(() => {
         if (!characterId) return;
@@ -23,7 +24,7 @@ const CharacterInfo: React.FC = observer(() => {
 
         if (storeCharacher) setCharacterInfo(storeCharacher);
         else {
-            fetchCharacter(characterId).then(character => setCharacterInfo(character));
+            void fetchCharacter(characterId).then(character => setCharacterInfo(character));
         }
     }, []);
 
