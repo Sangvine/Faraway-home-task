@@ -1,21 +1,46 @@
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getSnapshot } from 'mobx-state-tree';
 import { observer } from 'mobx-react-lite';
+import { Card } from 'antd';
+import { Link, useParams } from 'react-router-dom';
+
 import useMst from '../../hooks/useMst';
-import { DependencyList, EffectCallback, useRef } from 'react';
 import { CharacterModel } from '../../models/CharactersStore';
 
 import './index.css';
-import { Card } from 'antd';
 
-const CharacterInfo: React.FC<CharacterModel> = observer(({ name, birth_year }) => {
+const CharacterInfo: React.FC = observer(() => {
+    let { characterId } = useParams();
+    const {
+        charactersStore: { fetchCharacter, characters },
+    } = useMst();
+
+    const [characterInfo, setCharacterInfo] = useState<CharacterModel>();
+
+    useEffect(() => {
+        if (!characterId) return;
+        const storeCharacher = getSnapshot(characters).find(el => el.id === Number(characterId));
+
+        if (storeCharacher) setCharacterInfo(storeCharacher);
+        else {
+            fetchCharacter(characterId).then(character => setCharacterInfo(character));
+        }
+    }, []);
+
     return (
-        <Card title={name} className="character" extra={<a href="#">More</a>}>
-            <p>{birth_year}</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
+        <Card title={characterInfo?.name} className="character" extra={<Link to="/">Back</Link>}>
+            <strong>Birth year</strong>
+            <p>{characterInfo?.birth_year}</p>
+            <strong>Height</strong>
+            <p>{characterInfo?.height}</p>
+            <strong>Eye color</strong>
+            <p>{characterInfo?.eye_color}</p>
+            <strong>Gender</strong>
+            <p>{characterInfo?.gender}</p>
+            <strong>Mass</strong>
+            <p>{characterInfo?.mass}</p>
+            <strong>Skin color</strong>
+            <p>{characterInfo?.skin_color}</p>
         </Card>
     );
 });

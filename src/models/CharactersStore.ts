@@ -1,11 +1,10 @@
-import { cast, flow, getEnv, Instance, SnapshotOrInstance, getSnapshot, types } from 'mobx-state-tree';
-import { nanoid } from 'nanoid';
+import { cast, flow, SnapshotOrInstance, types } from 'mobx-state-tree';
 import { http } from '../http/http';
 import Loader from './Loader';
 
 export const Character = types
     .model('Character', {
-        id: types.identifier,
+        id: types.identifierNumber,
         name: types.string,
         height: types.string,
         mass: types.string,
@@ -14,6 +13,7 @@ export const Character = types
         eye_color: types.string,
         birth_year: types.string,
         gender: types.string,
+        url: types.string,
     })
     .views(self => {
         return {};
@@ -27,20 +27,25 @@ type CharacterRequest = {
 
 export const CharacterStore = Loader.named('IpPoolStore')
     .props({
-        characters: types.array(Character),
+        characters: types.optional(types.array(Character), []),
         count: types.maybeNull(types.number),
     })
     .actions(self => {
-        const fetchCharacters = flow(function*(params?: any) {
+        const fetchCharacters = flow(function*(params?: Record<string, any>) {
             self.setLoading(true);
-            const response = yield http<CharacterRequest>('https://swapi.dev/api/people/', params);
+            const response = yield http<CharacterRequest>('https://swapi.dev/api/people/', params || {});
             setCharacters(response.results);
             self.count = cast(response.count);
             self.setLoading(false);
         });
 
+        const fetchCharacter = flow(function*(id: string) {
+            const response = yield http<CharacterRequest>(`https://swapi.dev/api/people/${id}`);
+            return response as CharacterModel;
+        });
+
         const setCharacters = (characters: CharacterModel[]) => {
-            self.characters = cast(characters.map(el => ({ ...el, id: nanoid() })));
+            self.characters = cast(characters.map(el => ({ ...el, id: Number(el.url.split('/').at(-2)) })));
         };
-        return { fetchCharacters, setCharacters };
+        return { fetchCharacter, fetchCharacters, setCharacters };
     });

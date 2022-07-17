@@ -1,13 +1,13 @@
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getSnapshot } from 'mobx-state-tree';
 import { observer } from 'mobx-react-lite';
 import { Col, Row, Card, Pagination, Spin, Input } from 'antd';
+import { Link } from 'react-router-dom';
 
+import debounce from '../../utils/debounce';
 import useMst from '../../hooks/useMst';
 
 import './index.css';
-import debounce from '../../utils/debounce';
 
 const { Search } = Input;
 
@@ -46,19 +46,19 @@ const CharacterList: React.FC = observer(() => {
             />
             <Spin spinning={loading}>
                 <Row className="characters" gutter={24}>
-                    {getSnapshot(characters).map(el => {
+                    {getSnapshot(characters).map(({ id, name, birth_year, height }) => {
                         return (
-                            <Col key={el.id} style={colStyles}>
+                            <Col key={id} style={colStyles}>
                                 <Card
-                                    title={el.name}
+                                    title={name}
                                     className="character"
-                                    extra={<a href="#">More</a>}
+                                    extra={<Link to={`${id}`}>More</Link>}
                                     style={{ margin: 20 }}
                                 >
                                     <strong>Birth year</strong>
-                                    <p>{el.birth_year}</p>
+                                    <p>{birth_year}</p>
                                     <strong>Height</strong>
-                                    <p>{el.height}</p>
+                                    <p>{height}</p>
                                 </Card>
                             </Col>
                         );

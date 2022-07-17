@@ -5,7 +5,7 @@ type http = {
 
 let aborter: AbortController | null = null;
 
-export async function http<T>(url: string, config: Record<string, string>): Promise<T> {
+export async function http<T>(url: string, config?: Record<string, any>): Promise<T> {
     if (aborter) aborter.abort();
     aborter = new AbortController();
     const signal = aborter.signal;
