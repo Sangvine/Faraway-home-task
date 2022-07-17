@@ -2,7 +2,7 @@
 
 ## Сommentary
 
-Application made with React, MobX (mobx-state-tree), Ant design, and Vite. Deployed via VercelApp. 
+Application made with React, Typescript, MobX (mobx-state-tree), Ant design, and Vite. Deployed via VercelApp. 
 Didn't care too much about styling - I usually use CSS Modules, but for such a small application it makes no sense.
 Live demo - https://faraway-task.vercel.app/
 
