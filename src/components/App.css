@@ -1,8 +1,19 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
+}
+
+:root {
+  --main-bg-color: #fafafa;
+  --header-bg-color: #0a0a0a;
+  --header-text-color: #ffffff;
+  --text-color: #000000;
+    --gray-color: #808080;
+  --page-max-width: 1024px;
+  --accent-color: #EF5018;
+  --footer-bg-color: #161616;
+    --gap-size: 1.421rem;
+    --card-bg-color: #EFEFEF;
 }
 
 .logo {

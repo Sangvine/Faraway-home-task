@@ -1,0 +1,17 @@
+.main-content {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: var(--gap-size);
+  background: var(--main-bg-color);
+  margin: auto;
+  min-height: 90vh;
+  box-sizing: border-box;
+  width: 100%;
+  /* max-width: var(--page-max-width); */
+}
+
+
+.ant-spin {
+  max-height: unset !important;
+}
